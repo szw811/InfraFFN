@@ -18,8 +18,8 @@ def main():
     # Preparation
     # ----------------------------------------
 
-    model_name = '155000_G'
-    testset_name = 'IR100'
+    model_name = 'MFNet_x4'
+    testset_name = 'IR700_test'
     need_degradation = True              # default: True
     x8 = False                           # default: False
     sf = 4  # scale factor
