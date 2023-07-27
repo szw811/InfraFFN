@@ -75,8 +75,8 @@
     , "G_param_strict": true
     , "E_param_strict": true
 
-    , "checkpoint_test": 1           // for testing
+    , "checkpoint_test": 1000           // for testing
     , "checkpoint_save": 10000           // for saving model
-    , "checkpoint_print": 1           // for print
+    , "checkpoint_print": 1000           // for print
   }
 }
