@@ -20,9 +20,6 @@ from models.select_model import define_Model
 from torch.utils.tensorboard import SummaryWriter
 
 '''
-# --------------------------------------------
-# training code for MSRResNet
-# --------------------------------------------
 # Kai Zhang (cskaizhang@gmail.com)
 # github: https://github.com/cszn/KAIR
 # --------------------------------------------
@@ -30,9 +27,7 @@ from torch.utils.tensorboard import SummaryWriter
 # --------------------------------------------
 '''
 
-
-# 导入.json配置文件
-def main(json_path='options/train_mixsr.json'):
+def main(json_path='options/train_mfnet.json'):
     '''
     # ----------------------------------------
     # Step--1 (prepare opt)
@@ -59,7 +54,6 @@ def main(json_path='options/train_mixsr.json'):
         util.mkdirs((path for key, path in opt['path'].items() if 'pretrained' not in key))
 
     # ----------------------------------------
-    # update opt 更新.json的配置
     # ----------------------------------------
     # -->-->-->-->-->-->-->-->-->-->-->-->-->-
     init_iter_G, init_path_G = option.find_last_checkpoint(opt['path']['models'], net_type='G')
@@ -69,7 +63,6 @@ def main(json_path='options/train_mixsr.json'):
     init_iter_optimizerG, init_path_optimizerG = option.find_last_checkpoint(opt['path']['models'],
                                                                              net_type='optimizerG')
     opt['path']['pretrained_optimizerG'] = init_path_optimizerG
-    # 如果存在预训练模型 更新current_step
     current_step = max(init_iter_G, init_iter_E, init_iter_optimizerG)
 
     border = opt['scale']
@@ -87,7 +80,7 @@ def main(json_path='options/train_mixsr.json'):
     opt = option.dict_to_nonedict(opt)
 
     # ----------------------------------------
-    # configure logger 设置日志文件
+    # configure logger
     # ----------------------------------------
     if opt['rank'] == 0:
         logger_name = 'train'
@@ -101,7 +94,8 @@ def main(json_path='options/train_mixsr.json'):
     seed = opt['train']['manual_seed']
     if seed is None:
         seed = random.randint(1, 10000)
-    print('Random seed: {}'.format(seed))
+
+    logger.info('Random seed: {}'.format(seed))
     random.seed(seed)
     np.random.seed(seed)
 
@@ -120,8 +114,6 @@ def main(json_path='options/train_mixsr.json'):
     # ----------------------------------------
     for phase, dataset_opt in opt['datasets'].items():
         if phase == 'train':
-            # 根据配置文件dataset中的dataset_type确定如何构成数据集
-            # 例如对于bsrgan需要调用对应的设置数据方法
             train_set = define_Dataset(dataset_opt)
             train_size = int(math.ceil(len(train_set) / dataset_opt['dataloader_batch_size']))
             if opt['rank'] == 0:
@@ -150,18 +142,6 @@ def main(json_path='options/train_mixsr.json'):
                                       shuffle=False, num_workers=1,
                                       drop_last=False, pin_memory=True)
 
-            # dataset_opt['dataroot_H'] = 'testsets/results-A'
-            # test_set2 = define_Dataset(dataset_opt)
-            # test_loader2 = DataLoader(test_set2, batch_size=1,
-            #                           shuffle=False, num_workers=1,
-            #                           drop_last=False, pin_memory=True)
-            #
-            # dataset_opt['dataroot_H'] = 'testsets/results-C'
-            # test_set3 = define_Dataset(dataset_opt)
-            # test_loader3 = DataLoader(test_set3, batch_size=1,
-            #                           shuffle=False, num_workers=1,
-            #                           drop_last=False, pin_memory=True)
-
         else:
             raise NotImplementedError("Phase [%s] is not recognized." % phase)
 
@@ -170,8 +150,6 @@ def main(json_path='options/train_mixsr.json'):
     # Step--3 (initialize model)
     # ----------------------------------------
     '''
-
-    # 根据配置文件生成模型
     model = define_Model(opt)
     model.init_train()
     if opt['rank'] == 0:
@@ -183,40 +161,31 @@ def main(json_path='options/train_mixsr.json'):
     # Step--4 (main training)
     # ----------------------------------------
     '''
-    # 画图
-    writer = SummaryWriter("/mntcephfs/lab_data/wangcm/szw/mixsr_baseline_DIV2K_x4_5.23")
+    writer = SummaryWriter("tensorboard/mfnet_IR700_x4")
 
     logger.info(current_step)
-    best_loss = 0.1
-    best_PSNR = 30.90
-    # best_PSNR2 = 33.0
-    # best_PSNR3 = 33.0
-    # best_total = 53.0
+    best_loss = 1.0
+    best_PSNR = 0.0
 
     for epoch in range(406600):  # keep running
-        # if current_step > 300000:
-        #     break
+        if current_step > 300000:
+            break
         for i, train_data in enumerate(train_loader):
-            flag = 0
+
             current_step += 1
 
             # -------------------------------
-            # 2) feed patch pairs
+            # 1) feed patch pairs
             # -------------------------------
             model.feed_data(train_data)
 
             # -------------------------------
-            # 3) optimize parameters
+            # 2) optimize parameters
             # -------------------------------
             model.optimize_parameters(current_step)
 
             # -------------------------------
-            # 1) update learning rate 放最后了
-            # -------------------------------
-            # model.update_learning_rate()
-
-            # -------------------------------
-            # 4) training information
+            # 3) training information
             # -------------------------------
 
             if current_step % opt['train']['checkpoint_print'] == 0 and opt['rank'] == 0:
@@ -228,14 +197,14 @@ def main(json_path='options/train_mixsr.json'):
                 logger.info(message)
 
             # -------------------------------
-            # 5) saving
+            # 4) saving
             # -------------------------------
             if current_step % opt['train']['checkpoint_save'] == 0 and opt['rank'] == 0:
                 logger.info('Saving the model.')
                 model.save(current_step)
 
             # -------------------------------
-            # 6) testing
+            # 5) testing
             # -------------------------------
             if current_step % opt['train']['checkpoint_test'] == 0 and opt['rank'] == 0:
 
@@ -274,7 +243,6 @@ def main(json_path='options/train_mixsr.json'):
 
                     avg_psnr += current_psnr
 
-                # 计算平均psnr
                 avg_psnr = avg_psnr / idx
 
                 if avg_psnr > best_PSNR:
@@ -294,6 +262,10 @@ def main(json_path='options/train_mixsr.json'):
                                    best_PSNR,
                                    current_step)
 
+            # -------------------------------
+            # 6) update learning rate
+            # -------------------------------
+            # model.update_learning_rate()
             model.update_learning_rate()
             writer.add_scalar("G_loss", model.log_dict['G_loss'], current_step)
 
