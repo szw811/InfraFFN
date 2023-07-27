@@ -24,7 +24,7 @@
       , "withbic": false
       , "dataloader_shuffle": true
       , "dataloader_num_workers": 6
-      , "dataloader_batch_size": 2     // batch size 1 | 16 | 32 | 48 | 64 | 128.
+      , "dataloader_batch_size": 8     // batch size 1 | 16 | 32 | 48 | 64 | 128.
     }
     , "test": {
       "name": "test_dataset"            // just name
