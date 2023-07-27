@@ -1,7 +1,7 @@
 # MFN
 
 ## Train
-Download complete training dataset in [site](https://pan.baidu.com/s/1OTmUT6bswoNyshrWS9rXVQ) Code：cuek.
+Download complete training dataset in this [site](https://pan.baidu.com/s/1OTmUT6bswoNyshrWS9rXVQ). Code：cuek.
 ***
 Run 
 ```
@@ -9,7 +9,7 @@ Run
 ```
 
 ## Evaluation
-Download trained models and complete testing dataset in [site](https://pan.baidu.com/s/1OTmUT6bswoNyshrWS9rXVQ) Code：cuek.
+Download trained models and complete testing dataset in thie [site](https://pan.baidu.com/s/1OTmUT6bswoNyshrWS9rXVQ). Code：cuek.
 
 Setting up the following directory structure:
 
