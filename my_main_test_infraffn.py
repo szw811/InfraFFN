@@ -18,7 +18,7 @@ def main():
     # Preparation
     # ----------------------------------------
 
-    model_name = 'MFNet_x4'
+    model_name = 'infraffn_x4'
     testset_name = 'IR700_test'
     need_degradation = True              # default: True
     x8 = False                           # default: False
@@ -57,7 +57,7 @@ def main():
     # ----------------------------------------
     # load model
     # ----------------------------------------
-    from models.network_mfnet import MFNet as net
+    from models.network_infraffn import InfraFFN as net
 
     model = net(upscale=sf, in_chans=n_channels, img_size=64, window_size=8,
                 img_range=1., depths=[6, 6, 6, 6, 6, 6], embed_dim=192, num_heads=[6, 6, 6, 6, 6, 6],
