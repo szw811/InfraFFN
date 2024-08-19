@@ -566,7 +566,7 @@ class UpsampleOneStep(nn.Sequential):
         return flops
 
 
-class MFNet(nn.Module):
+class InfraFFN(nn.Module):
     """ A PaddlePaddle impl of MixFormer:
     MixFormer: Mixing Features across Windows and Dimensions (CVPR 2022, Oral)
     Modified from Swin Transformer.
@@ -604,7 +604,7 @@ class MFNet(nn.Module):
                  drop_path_rate=0.1, norm_layer=nn.LayerNorm, ape=False, patch_norm=True,
                  upscale=2, upsampler='pixelshuffle', resi_connection='1conv',
                  use_checkpoint=False, **kwargs):
-        super(MFNet, self).__init__()
+        super(InfraFFN, self).__init__()
         num_in_ch = in_chans
         num_out_ch = in_chans
         num_feat = 64
