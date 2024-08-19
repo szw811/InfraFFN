@@ -25,8 +25,8 @@ def define_G(opt):
     # ----------------------------------------
     # DnCNN
     # ----------------------------------------
-    if net_type == 'mfnet':
-        from models.network_mfnet import MFNet as net
+    if net_type == 'infraffn':
+        from models.network_infraffn import InfraFFN as net
         netG = net(upscale=opt_net['upscale'],
                    in_chans=opt_net['in_chans'],
                    img_size=opt_net['img_size'],
