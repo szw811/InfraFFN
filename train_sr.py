@@ -27,7 +27,7 @@ from torch.utils.tensorboard import SummaryWriter
 # --------------------------------------------
 '''
 
-def main(json_path='options/train_mfnet.json'):
+def main(json_path='options/train_infraffn.json'):
     '''
     # ----------------------------------------
     # Step--1 (prepare opt)
@@ -161,7 +161,7 @@ def main(json_path='options/train_mfnet.json'):
     # Step--4 (main training)
     # ----------------------------------------
     '''
-    writer = SummaryWriter("tensorboard/mfnet_IR700_x4")
+    writer = SummaryWriter("tensorboard/infraffn_IR700_x4")
 
     logger.info(current_step)
     best_loss = 1.0
